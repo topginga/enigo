@@ -321,8 +321,24 @@ pub trait Mouse {
     /// # Errors
     /// Have a look at the documentation of [`InputError`] to see under which
     /// conditions an error will be returned.
-    #[doc(alias = "mouse_move_to", alias = "mouse_move_relative")]
+    #[doc(alias = "mouse_move_to", alias = "mouse_move_abs")]
     fn move_mouse(&mut self, x: i32, y: i32, coordinate: Coordinate) -> InputResult<()>;
+
+    /// Sends a direct input as a mouse movement relative from the current position.
+    ///
+    /// Works to move your camera within games.
+    ///
+    /// This function moves the mouse cursor by the specified amount `x` and `y`.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The horizontal amount to move the mouse by.
+    /// * `y` - The vertical amount to move the mouse by.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `InputError` if simulating the input fails.
+    fn move_mouse_rel(&mut self, x: i32, y: i32) -> InputResult<()>;
 
     /// Send a mouse scroll event
     ///
