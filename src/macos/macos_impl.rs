@@ -40,7 +40,7 @@ const kUCKeyTranslateNoDeadKeysBit: CFIndex = 0; // Previously was always u32. C
 #[allow(improper_ctypes)]
 #[link(name = "Carbon", kind = "framework")]
 unsafe extern "C" {
-    // “Copy” here means +1 retain — we must CFRelease when done
+    // “Copy” here means +1 retain -- we must CFRelease when done
     fn TISCopyCurrentKeyboardInputSource() -> TISInputSourceRef;
     fn TISCopyCurrentKeyboardLayoutInputSource() -> TISInputSourceRef;
     fn TISCopyCurrentASCIICapableKeyboardLayoutInputSource() -> TISInputSourceRef;
@@ -179,6 +179,68 @@ impl Mouse for Enigo {
             event.post(CGEventTapLocation::HID);
             self.update_wait_time();
         }
+        Ok(())
+    }
+
+    /// Move the mouse cursor by a given amount.
+    ///
+    /// This function moves the mouse cursor by the specified amount `x` and `y`.
+    /// It generates a `MouseMoved` event, which is functionally different from
+    /// `move_mouse` with `Coordinate::Rel` as it will not be interpreted as a
+    /// drag event, even if a mouse button is held down.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` - The horizontal amount to move the mouse by.
+    /// * `y` - The vertical amount to move the mouse by.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `InputError` if simulating the input fails.
+    ///
+    /// # Remarks
+    ///
+    /// You will also need to add this function definition to the `Mouse` trait.
+    fn move_mouse_rel(&mut self, x: i32, y: i32) -> InputResult<()> {
+        debug!("\x1b[93mmove_mouse_rel(x: {x:?}, y: {y:?})\x1b[0m");
+
+        // Unlike `move_mouse`, this function will not check for pressed buttons
+        // and will always emit a `MouseMoved` event. This provides a pure
+        // relative motion event without it being interpreted as a drag.
+        let event_type = CGEventType::MouseMoved;
+        // The mouse button is ignored for move events, so Left is a safe default.
+        let button = CGMouseButton::Left;
+
+        // A mouse event still requires a position. We use the current position,
+        // and the OS will then apply the deltas to it.
+        let (current_x, current_y) = self.location()?;
+        let dest = CGPoint::new(current_x as f64, current_y as f64);
+
+        let Ok(event) =
+            CGEvent::new_mouse_event(self.event_source.clone(), event_type, dest, button)
+        else {
+            return Err(InputError::Simulate(
+                "failed creating event to move the mouse relatively",
+            ));
+        };
+
+        // Set the delta values for the relative move.
+        event.set_integer_value_field(EventField::MOUSE_EVENT_DELTA_X, x.into());
+        event.set_integer_value_field(EventField::MOUSE_EVENT_DELTA_Y, y.into());
+
+        // Set the other required fields for consistency with the rest of the library.
+        event.set_integer_value_field(
+            EventField::EVENT_SOURCE_USER_DATA,
+            self.event_source_user_data,
+        );
+        event.set_flags(self.event_flags);
+
+        // Post the event to the system.
+        event.post(CGEventTapLocation::HID);
+
+        // Update the wait timer to help ensure the OS processes the event.
+        self.update_wait_time();
+
         Ok(())
     }
 
@@ -542,7 +604,7 @@ impl Enigo {
 
         let double_click_delay = Duration::from_secs(1);
         let double_click_delay_setting = unsafe { NSEvent::doubleClickInterval() };
-        // Returns the double click interval (https://developer.apple.com/documentation/appkit/nsevent/1528384-doubleclickinterval). This is a TimeInterval which is a f64 of the number of seconds
+        // Returns the double click interval . This is a TimeInterval which is a f64 of the number of seconds
         let double_click_delay = double_click_delay.mul_f64(double_click_delay_setting);
 
         let event_source_state = if *independent_of_keyboard_state {
