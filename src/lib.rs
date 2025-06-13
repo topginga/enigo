@@ -47,6 +47,14 @@
 #![allow(clippy::cast_sign_loss)]
 #![allow(deprecated)]
 
+/// Returns a new Enigo object
+#[macro_export]
+macro_rules! new_enigo {
+    () => {
+        enigo::Enigo::new(&enigo::Settings::default()).unwrap()
+    };
+}
+
 use std::{
     error::Error,
     fmt::{self, Display, Formatter},
@@ -65,6 +73,7 @@ use strum_macros::EnumIter;
 /// to tell the enigo struct to [`crate::agent::Agent::execute`] the token. Have
 /// a look at the `serde` example if you'd like to read some code to see how it
 /// works.
+
 pub mod agent;
 
 #[cfg_attr(all(unix, not(target_os = "macos")), path = "linux/mod.rs")]
