@@ -47,6 +47,94 @@
 #![allow(clippy::cast_sign_loss)]
 #![allow(deprecated)]
 
+/// Presses and releases the specified key (numbers designed for mac os)
+#[macro_export]
+macro_rules! press_key {
+    ($enigo:ident, $key:expr) => {
+        match $key {
+            '0' => $enigo.key(Key::Other(0x1D), enigo::Direction::Click).unwrap(),
+            '1' => $enigo.key(Key::Other(0x12), enigo::Direction::Click).unwrap(),
+            '2' => $enigo.key(Key::Other(0x13), enigo::Direction::Click).unwrap(),
+            '3' => $enigo.key(Key::Other(0x14), enigo::Direction::Click).unwrap(),
+            '4' => $enigo.key(Key::Other(0x15), enigo::Direction::Click).unwrap(),
+            '5' => $enigo.key(Key::Other(0x17), enigo::Direction::Click).unwrap(),
+            '6' => $enigo.key(Key::Other(0x16), enigo::Direction::Click).unwrap(),
+            '7' => $enigo.key(Key::Other(0x1A), enigo::Direction::Click).unwrap(),
+            '8' => $enigo.key(Key::Other(0x1C), enigo::Direction::Click).unwrap(),
+            '9' => $enigo.key(Key::Other(0x19), enigo::Direction::Click).unwrap(),
+            _ => $enigo.key(enigo::Key::Unicode($key), enigo::Direction::Click).expect("Error occured pressing key")
+        }
+    };
+
+    ($enigo:expr, $key:ident, $event:ident) => {
+        $enigo.key(enigo::Key::$key, $event).expect("Error occured pressing key");
+    };
+}
+
+/// Holds down the selected key (numbers designed for mac os)
+#[macro_export]
+macro_rules! hold_key {
+    ($enigo:ident, $key:expr) => {
+        match $key {
+            '0' => $enigo.key(Key::Other(0x1D), enigo::Direction::Press).unwrap(),
+            '1' => $enigo.key(Key::Other(0x12), enigo::Direction::Press).unwrap(),
+            '2' => $enigo.key(Key::Other(0x13), enigo::Direction::Press).unwrap(),
+            '3' => $enigo.key(Key::Other(0x14), enigo::Direction::Press).unwrap(),
+            '4' => $enigo.key(Key::Other(0x15), enigo::Direction::Press).unwrap(),
+            '5' => $enigo.key(Key::Other(0x17), enigo::Direction::Press).unwrap(),
+            '6' => $enigo.key(Key::Other(0x16), enigo::Direction::Press).unwrap(),
+            '7' => $enigo.key(Key::Other(0x1A), enigo::Direction::Press).unwrap(),
+            '8' => $enigo.key(Key::Other(0x1C), enigo::Direction::Press).unwrap(),
+            '9' => $enigo.key(Key::Other(0x19), enigo::Direction::Press).unwrap(),
+            _ => $enigo.key(enigo::Key::Unicode($key), enigo::Direction::Press).expect("Error occured pressing key")
+        }
+    };
+
+    ($enigo:expr, $key:ident) => {
+        $enigo.key(enigo::Key::$key, Press).expect("Error occured pressing key");
+    };
+}
+
+/// Releases the selected key (numbers designed for mac os)
+#[macro_export]
+macro_rules! release_key {
+    ($enigo:ident, $key:expr) => {
+        match $key {
+            '0' => $enigo.key(Key::Other(0x1D), enigo::Direction::Release).unwrap(),
+            '1' => $enigo.key(Key::Other(0x12), enigo::Direction::Release).unwrap(),
+            '2' => $enigo.key(Key::Other(0x13), enigo::Direction::Release).unwrap(),
+            '3' => $enigo.key(Key::Other(0x14), enigo::Direction::Release).unwrap(),
+            '4' => $enigo.key(Key::Other(0x15), enigo::Direction::Release).unwrap(),
+            '5' => $enigo.key(Key::Other(0x17), enigo::Direction::Release).unwrap(),
+            '6' => $enigo.key(Key::Other(0x16), enigo::Direction::Release).unwrap(),
+            '7' => $enigo.key(Key::Other(0x1A), enigo::Direction::Release).unwrap(),
+            '8' => $enigo.key(Key::Other(0x1C), enigo::Direction::Release).unwrap(),
+            '9' => $enigo.key(Key::Other(0x19), enigo::Direction::Release).unwrap(),
+            _ => $enigo.key(enigo::Key::Unicode($key), enigo::Direction::Release).expect("Error occured pressing key")
+        }
+    };
+
+    ($enigo:expr, $key:ident) => {
+        $enigo.key(enigo::Key::$key, Release).expect("Error occured pressing key");
+    };
+}
+
+/// Initiates a left/right click/press/release with the mouse
+#[macro_export]
+macro_rules! mouse_event {
+    ($enigo:expr, $button:ident, $event:ident) => {
+        $enigo.button(enigo::Button::$button, $event).expect("Error occurred clicking mouse");
+    };
+}
+
+/// Types out a specific string
+#[macro_export]
+macro_rules! type_out {
+    ($enigo:ident, $text:expr) => {
+        $enigo.text($text).expect("Error when typing word");
+    };
+}
+
 /// Returns a new Enigo object
 #[macro_export]
 macro_rules! new_enigo {
