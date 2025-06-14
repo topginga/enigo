@@ -16,36 +16,6 @@ use strum_macros::EnumIter;
 #[cfg_attr(test, derive(EnumIter))]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Key {
-    /// Main keyboard number 0 (above 'P')
-    #[cfg(target_os = "macos")]
-    MainNum0,
-    /// Main keyboard number 1 (above 'Q')
-    #[cfg(target_os = "macos")]
-    MainNum1,
-    /// Main keyboard number 2 (above 'W')
-    #[cfg(target_os = "macos")]
-    MainNum2,
-    /// Main keyboard number 3 (above 'E')
-    #[cfg(target_os = "macos")]
-    MainNum3,
-    /// Main keyboard number 4 (above 'R')
-    #[cfg(target_os = "macos")]
-    MainNum4,
-    /// Main keyboard number 5 (above 'T')
-    #[cfg(target_os = "macos")]
-    MainNum5,
-    /// Main keyboard number 6 (above 'Y')
-    #[cfg(target_os = "macos")]
-    MainNum6,
-    /// Main keyboard number 7 (above 'U')
-    #[cfg(target_os = "macos")]
-    MainNum7,
-    /// Main keyboard number 8 (above 'I')
-    #[cfg(target_os = "macos")]
-    MainNum8,
-    /// Main keyboard number 9 (above 'O')
-    #[cfg(target_os = "macos")]
-    MainNum9,
     #[cfg(target_os = "windows")]
     Num0,
     #[cfg(target_os = "windows")]
